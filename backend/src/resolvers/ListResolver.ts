@@ -19,7 +19,7 @@ export class ListResolver {
     }
 
     @Mutation(() => Boolean)
-    async deleteLink(@Arg("accessCode") code: string) {
+    async deleteList(@Arg("accessCode") code: string) {
         const list = await List.findOne({ where: { code: code} });
         if(!list) throw Error("List doesn't exist!");
 
@@ -30,5 +30,10 @@ export class ListResolver {
     @Query(() => Boolean)
     async codeIsValid(@Arg("accessCode") code: string) {
       return validateCode(code)
+    }
+
+    @Query(() => Boolean)
+    async checkConnection(@Arg("accessCode") code: string) {
+      return true
     }
 }

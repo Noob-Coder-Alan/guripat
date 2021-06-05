@@ -31,7 +31,7 @@ export class ItemResolver {
 
     
     @Mutation(() => Boolean, { nullable: true })
-    async deleteProduct(@Arg("accessCode") code: String, @Arg("itemId") itemId: number) {
+    async deleteItem(@Arg("accessCode") code: String, @Arg("itemId") itemId: number) {
       const list = await List.findOne({where: {code: code}});
         const item = await Item.findOne({ where: { list: list, id: itemId }, relations: ["list"]  });
         if (!item) throw new Error("Deletion not possible! Item doesn't exist!")
@@ -57,5 +57,10 @@ export class ItemResolver {
         item.quantity = 0;  
         await item.save();
         return item;
+    }
+
+    @Query(() => Boolean, { nullable: true })
+    async checkConnection(@Arg("accessCode") code: String) {
+        return true;
     }
 }
