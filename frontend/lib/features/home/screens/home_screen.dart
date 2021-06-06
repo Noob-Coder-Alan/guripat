@@ -13,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
-
   late HomeScreenPresenter presenter;
 
   @override
@@ -31,9 +30,8 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
   @override
   late String generatedAccessCode;
 
-
   @override
-  void initState(){
+  void initState() {
     presenter = HomeScreenPresenter();
     presenter.attachView(this);
     formKey = GlobalKey<FormState>();
@@ -42,14 +40,13 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
 
     state = AppState.done;
     body = Home(
-      onSubmit: onCodeSubmit, 
+      onSubmit: onCodeSubmit,
       onGenerate: onGenerateCode,
       onAccessCodeSaved: setLocalAccessCode,
-      accessCode: accessCode, 
-      formKey: formKey, 
+      accessCode: accessCode,
+      formKey: formKey,
       generatedAccessCode: accessCode,
     );
-
 
     super.initState();
   }
@@ -57,23 +54,38 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
   @override
   void onCodeSubmit(BuildContext context, String code) async {
     setState(() {
-      state = AppState.loading;      
+      state = AppState.loading;
     });
 
     var listProvider = Provider.of<ListProvider>(context, listen: false);
-    
-    if(await listProvider.checkConnection() && await listProvider.isCodeValid(code)){
+
+    var connection = await listProvider.checkConnection();
+    var codeIsValid = await listProvider.isCodeValid(code);
+
+    if (connection && codeIsValid) {
       listProvider.setAccessCode(0, code);
       setState(() {
         body = Home(
-          onSubmit: onCodeSubmit, 
-          onGenerate: onGenerateCode, 
-          accessCode: accessCode, 
-          formKey: formKey, 
-          generatedAccessCode: accessCode,
+          onSubmit: onCodeSubmit,
+          onGenerate: onGenerateCode,
+          accessCode: accessCode,
+          formKey: formKey,
+          generatedAccessCode: generatedAccessCode,
           onAccessCodeSaved: setLocalAccessCode,
         );
-        state = AppState.done;      
+        state = AppState.done;
+      });
+    } else {
+      setState(() {
+        body = Home(
+          onSubmit: onCodeSubmit,
+          onGenerate: onGenerateCode,
+          accessCode: accessCode,
+          formKey: formKey,
+          generatedAccessCode: generatedAccessCode,
+          onAccessCodeSaved: setLocalAccessCode,
+        );
+        state = AppState.invalid;
       });
     }
   }
@@ -81,46 +93,43 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
   @override
   void onGenerateCode(BuildContext context) async {
     setState(() {
-      state = AppState.loading;   
+      state = AppState.loading;
     });
 
-    var listProvider = Provider.of<ListProvider>(context, listen:false);
+    var listProvider = Provider.of<ListProvider>(context, listen: false);
 
-    if(await listProvider.checkConnection()){
-     var list = await listProvider.generateListCode();
-     setState(() {
-      generatedAccessCode = list.code;
-      print(generatedAccessCode);
+    if (await listProvider.checkConnection()) {
+      var list = await listProvider.generateListCode();
+      setState(() {
+        generatedAccessCode = list.code;
         body = Home(
-          onSubmit: onCodeSubmit, 
-          onGenerate: onGenerateCode, 
-          accessCode: accessCode, 
-          formKey: formKey, 
+          onSubmit: onCodeSubmit,
+          onGenerate: onGenerateCode,
+          accessCode: accessCode,
+          formKey: formKey,
           generatedAccessCode: generatedAccessCode,
           onAccessCodeSaved: setLocalAccessCode,
         );
-        state = AppState.done;   
+        state = AppState.done;
       });
     } else {
       setState(() {
-        state = AppState.error;    
+        state = AppState.error;
       });
     }
-
-
   }
 
   @override
   void setLocalAccessCode(String code) {
     setState(() {
-      accessCode = code;      
+      accessCode = code;
       body = Home(
-          onSubmit: onCodeSubmit, 
-          onGenerate: onGenerateCode, 
-          accessCode: accessCode, 
-          formKey: formKey, 
-          generatedAccessCode: accessCode,
-          onAccessCodeSaved: setLocalAccessCode,
+        onSubmit: onCodeSubmit,
+        onGenerate: onGenerateCode,
+        accessCode: accessCode,
+        formKey: formKey,
+        generatedAccessCode: accessCode,
+        onAccessCodeSaved: setLocalAccessCode,
       );
     });
   }
@@ -128,20 +137,28 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
   @override
   void setAppState(AppState newState) {
     setState(() {
-      state = newState;      
+      state = newState;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(accessCode);
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Guripat"),
-      ),
-      body: presenter.body(context)
-    );
+        appBar: AppBar(
+          title: Text("Guripat"),
+        ),
+        body: presenter.body(context));
   }
 
-
+  @override
+  Future<bool> isCodeValid(BuildContext context, String code) async {
+    var listProvider = Provider.of<ListProvider>(context, listen: false);
+    if (await listProvider.checkConnection()) {
+      var isValid = await listProvider.isCodeValid(code);
+      print(isValid);
+      return isValid;
+    } else {
+      return false;
+    }
+  }
 }
