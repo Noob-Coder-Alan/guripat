@@ -1,1 +1,1 @@
-enum AppState {loading, error, done, successful}
+enum AppState {loading, error, done, successful, invalid}
