@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
-
   final Function onGenerate;
   final Function onSubmit;
   final Function onAccessCodeSaved;
-  final GlobalKey<FormState> formKey; 
-  String accessCode;
-  String generatedAccessCode;
+  final GlobalKey<FormState> formKey;
+  final String accessCode;
+  final String generatedAccessCode;
 
-  Home({
-    Key? key, 
-    required this.onGenerate, 
-    required this.onSubmit,
-    required this.onAccessCodeSaved,
-    required this.formKey,
-    required this.accessCode,
-    required this.generatedAccessCode
-  }) : super(key: key);
+  Home(
+      {Key? key,
+      required this.onGenerate,
+      required this.onSubmit,
+      required this.onAccessCodeSaved,
+      required this.formKey,
+      required this.accessCode,
+      required this.generatedAccessCode})
+      : super(key: key);
 
-
-
-  Widget buildListCodeField() {
+  Widget buildListCodeField(BuildContext context) {
     return TextFormField(
+      key: Key("accessCode"),
       initialValue: accessCode,
       decoration: InputDecoration(
         labelText: '  List code',
@@ -37,7 +35,6 @@ class Home extends StatelessWidget {
         return null;
       },
       onChanged: (value) {
-        // print(value);
         onAccessCodeSaved(value);
       },
     );
@@ -45,10 +42,11 @@ class Home extends StatelessWidget {
 
   Widget buildGeneratedListCodeField() {
     return TextFormField(
+      key: Key('generatedAccessCode'),
       readOnly: true,
       initialValue: generatedAccessCode,
       decoration: InputDecoration(
-        labelText: '  Generated List Code',
+        labelText: '  Generated list code',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -68,13 +66,14 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  buildListCodeField(),
+                  buildListCodeField(context),
                   SizedBox(
                     height: 25,
                   ),
                   ElevatedButton(
+                    key: Key("proceedToList"),
                     child: Text(
-                      'Submit',
+                      'Proceed to list',
                       // style: TextStyle(),
                     ),
                     onPressed: () async {
@@ -93,10 +92,11 @@ class Home extends StatelessWidget {
                     height: 25,
                   ),
                   ElevatedButton(
+                    key: Key("generate"),
                     child: Text("Generate list code"),
                     onPressed: () async {
-                     onGenerate(context);
-                    }, 
+                      onGenerate(context);
+                    },
                   ),
                 ],
               ),
