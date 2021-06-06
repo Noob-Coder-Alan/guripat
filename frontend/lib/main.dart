@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/datasources/item/item_remote_datasource.dart';
 import 'package:frontend/providers/item_provider.dart';
 import 'package:frontend/providers/list_provider.dart';
 import 'package:graphql/client.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 import 'datasources/list/list_remote_datasource.dart';
@@ -15,17 +17,28 @@ void main() {
 
   var link = 'http://localhost:5000/graphql';
 
-  ItemListRemoteDatasource datasource = ItemListRemoteDatasource(
+  ItemListRemoteDatasource itemListDatasource = ItemListRemoteDatasource(
       client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
+
+  ItemRemoteDatasource itemDatasource = ItemRemoteDatasource(
+    client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
+
+  var localStorageInstance = SharedPreferences.getInstance();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ItemProvider>(
-          create: (_) => ItemProvider(),
+          create: (_) => ItemProvider(
+            localStorageInstance: localStorageInstance, 
+            datasource: itemDatasource
+          ),
         ),
         ChangeNotifierProvider<ListProvider>(
-          create: (_) => ListProvider(datasource: datasource),
+          create: (_) => ListProvider(
+            localStorageInstance: localStorageInstance,
+            datasource: itemListDatasource
+          ),
         ),
       ],
       builder: (context, child) {
