@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/item.dart';
-import 'package:frontend/models/new_item.dart';
 import 'package:frontend/providers/item_provider.dart';
 import 'package:frontend/providers/list_provider.dart';
 import 'package:graphql/client.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
-import 'datasources/item/item_remote_datasource.dart';
 import 'datasources/list/list_remote_datasource.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/list/item_list_screen.dart';
 
 void main() {
-  SharedPreferences _storage;
+  // SharedPreferences _storage;
 
   var link = 'http://localhost:5000/graphql';
 

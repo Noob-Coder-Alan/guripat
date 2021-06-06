@@ -15,7 +15,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
     try {
       final query = """
         mutation {
-          addItem(accessCode: "${code}", isPerishable: ${item.isPerishable}, quantity: ${item.quantity}, name: "${item.name}"){
+          addItem(accessCode: "$code", isPerishable: ${item.isPerishable}, quantity: ${item.quantity}, name: "${item.name}"){
             id,
             name,
             quantity,

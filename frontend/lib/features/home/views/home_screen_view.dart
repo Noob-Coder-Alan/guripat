@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/state/app_state.dart';
-import 'package:frontend/models/ItemList.dart';
 
 abstract class HomeScreenView {
   late AppState state;

@@ -1,6 +1,4 @@
 import 'package:frontend/models/ItemList.dart';
-import 'package:frontend/models/item.dart';
-import 'package:frontend/models/new_item.dart';
 
 abstract class IItemListDataSource {
   Future<bool> codeIsValid(String code);

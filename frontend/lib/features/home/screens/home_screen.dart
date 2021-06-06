@@ -3,7 +3,6 @@ import 'package:frontend/core/state/app_state.dart';
 import 'package:frontend/features/home/presenters/home_screen_presenter.dart';
 import 'package:frontend/features/home/screens/pages/home_view.dart';
 import 'package:frontend/features/home/views/home_screen_view.dart';
-import 'package:frontend/models/ItemList.dart';
 import 'package:frontend/providers/list_provider.dart';
 import 'package:provider/provider.dart';
 
