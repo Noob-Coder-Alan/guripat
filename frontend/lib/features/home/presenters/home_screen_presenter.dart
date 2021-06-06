@@ -11,8 +11,7 @@ class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
     
     if (isViewAttached && getView().state == AppState.loading) {
       return Center(child: CircularProgressIndicator());
-    } else if (isViewAttached &&
-        getView().state == AppState.done) {
+    } else if (isViewAttached && getView().state == AppState.done) {
       return getView().body;
     } else {
       return Center(
@@ -23,7 +22,7 @@ class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
             Text("An error has occured... Hmmm, it's probably the net."),
             ElevatedButton(
                 onPressed: () async {
-                  Navigator.pop(context);
+                  getView().state = AppState.done;
                 },
                 child: Text("Okay")
             ),
@@ -32,5 +31,4 @@ class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
       );
     }
   }
-
 }

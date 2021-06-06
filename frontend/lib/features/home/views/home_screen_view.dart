@@ -5,7 +5,12 @@ import 'package:frontend/models/ItemList.dart';
 abstract class HomeScreenView {
   late AppState state;
   late Widget body;
+  late String accessCode;
+  late String generatedAccessCode;
+  late var formKey;
 
-  Future<bool> onCodeSubmit(BuildContext context, String code);
-  Future<ItemList> onGenerateCode(BuildContext context);
+  void onCodeSubmit(BuildContext context, String code);
+  void onGenerateCode(BuildContext context);
+  void setLocalAccessCode(String code);
+  void setAppState(AppState state);
 }

@@ -32,6 +32,7 @@ class ListProvider extends ChangeNotifier {
 
   Future<bool> isCodeValid(String code) async {
     var isValid = await datasource.checkConnection();
+    notifyListeners();
     return isValid;
   }
 

@@ -27,10 +27,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ItemProvider>(
-          create: (_) => ItemProvider(),
+          create: (context) => ItemProvider(),
         ),
         ChangeNotifierProvider<ListProvider>(
-          create: (_) => ListProvider(),
+          create: (context) => ListProvider(),
         ),
       ],
       builder: (context, child) {
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Guripat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

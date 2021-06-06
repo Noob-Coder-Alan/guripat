@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
 
+  final Function onGenerate;
   final Function onSubmit;
+  final Function onAccessCodeSaved;
+  final GlobalKey<FormState> formKey; 
+  String accessCode;
+  String generatedAccessCode;
 
-  Home({Key? key, required this.onSubmit});
+  Home({
+    Key? key, 
+    required this.onGenerate, 
+    required this.onSubmit,
+    required this.onAccessCodeSaved,
+    required this.formKey,
+    required this.accessCode,
+    required this.generatedAccessCode
+  }) : super(key: key);
 
-  @override
-  _HomeState createState() => _HomeState();
-}
 
-class _HomeState extends State<Home> {
-final _formKey = GlobalKey<FormState>();
-
-  String accessCode = "";
-  String generatedAccessCode = "";
 
   Widget buildListCodeField() {
     return TextFormField(
+      initialValue: accessCode,
       decoration: InputDecoration(
         labelText: '  List code',
         border: OutlineInputBorder(
@@ -25,17 +31,14 @@ final _formKey = GlobalKey<FormState>();
         ),
       ),
       validator: (value) {
-        if (accessCode.isEmpty) {
+        if (value == "") {
           return "A list code is required to proceed!";
         }
         return null;
       },
-      onSaved: (value) {
-        if(value != null){
-          accessCode = value;
-        } else {
-          accessCode = "";
-        }
+      onChanged: (value) {
+        // print(value);
+        onAccessCodeSaved(value);
       },
     );
   }
@@ -59,7 +62,7 @@ final _formKey = GlobalKey<FormState>();
       child: Container(
         margin: EdgeInsets.all(20),
         child: Form(
-            key: _formKey,
+            key: formKey,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -74,22 +77,25 @@ final _formKey = GlobalKey<FormState>();
                       'Submit',
                       // style: TextStyle(),
                     ),
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) {
+                    onPressed: () async {
+                      if (!formKey.currentState!.validate()) {
                         return;
                       }
-                      _formKey.currentState!.save();
-                      widget.onSubmit(context, );
+                      formKey.currentState!.save();
+                      await onSubmit(context, accessCode);
                     },
                   ),
                   SizedBox(
-                    height: 25,
+                    height: 50,
                   ),
                   buildGeneratedListCodeField(),
+                  SizedBox(
+                    height: 25,
+                  ),
                   ElevatedButton(
                     child: Text("Generate list code"),
-                    onPressed: () {
-                      //set generatedAccessCode
+                    onPressed: () async {
+                     onGenerate(context);
                     }, 
                   ),
                 ],
@@ -99,4 +105,3 @@ final _formKey = GlobalKey<FormState>();
     );
   }
 }
-
