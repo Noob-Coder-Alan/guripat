@@ -33,7 +33,7 @@ export class ListResolver {
     }
 
     @Query(() => Boolean)
-    async checkConnection(@Arg("accessCode") code: string) {
+    async checkConnectionList() {
       return true
     }
 }
