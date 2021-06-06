@@ -1,16 +1,10 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/datasources/list/list_remote_datasource.dart';
 
 import 'package:frontend/models/ItemList.dart';
 import 'package:frontend/providers/list_provider.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MockItemListRemoteDatasource extends Mock
     implements ItemListRemoteDatasource {
@@ -61,10 +55,14 @@ class MockItemListRemoteDatasource extends Mock
 }
 
 
-void main() {
+void main() async {
 
   var datasource = MockItemListRemoteDatasource();
-  var provider = ListProvider(datasource: datasource);
+  SharedPreferences.setMockInitialValues({});
+  var provider = ListProvider(
+    datasource: datasource, 
+    localStorageInstance: SharedPreferences.getInstance()
+  );
   
   test('List Provider should return a generated list code', () async {
     var generatedCode = await provider.generateListCode();
@@ -85,6 +83,12 @@ void main() {
   test('List Provider should be able to set list to list property', () async {
     provider.setAccessCode(1, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
     expect(provider.list.code, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+  });
+
+  test('List Provider should be able to save accessCode to localStorage', () async {
+    // var localStorageInstance = await SharedPreferences.getInstance();
+    // var accessCode = localStorageInstance.getString("accessCode");
+    // expect(accessCode, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
   });
 
   test('List Provider should be able to delete item list', () async {

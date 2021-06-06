@@ -15,6 +15,7 @@ import 'package:frontend/models/ItemList.dart';
 import 'package:frontend/providers/list_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MockItemListRemoteDatasource extends Mock
     implements ItemListRemoteDatasource {
@@ -74,12 +75,18 @@ class MockMyApp extends StatelessWidget {
 void main() {
   testWidgets('Pseudo "Login screen" test', (WidgetTester tester) async {
     var datasource = MockItemListRemoteDatasource();
+    SharedPreferences.setMockInitialValues({});
+    var localStorageInstance = SharedPreferences.getInstance();
+    
 
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<ListProvider>(
-            create: (_) => ListProvider(datasource: datasource),
+            create: (_) => ListProvider(
+              datasource: datasource, 
+              localStorageInstance: localStorageInstance
+            ),
           ),
         ],
         builder: (context, child) {
