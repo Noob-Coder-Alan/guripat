@@ -21,36 +21,36 @@ class MockItemListRemoteDatasource extends Mock
   @override
   Future<bool> checkConnection() async {
     try {
-      return await true;
+      return true;
     } catch (e) {
-      return await false;
+      return false;
     }
   }
 
   @override
   Future<bool> codeIsValid(String code) async {
     try {
-      return await true;
+      return true;
     } catch (e) {
-      return await false;
+      return false;
     }
   }
 
   @override
   Future<bool> deleteList(String code) async {
     try {
-      return await true;
+      return true;
     } catch (e) {
-      return await false;
+      return false;
     }
   }
 
   @override
   Future<ItemList> generateListCode() async {
     try {
-      return await ItemList(id: 1, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+      return ItemList(id: 1, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
     } catch (e) {
-      return await ItemList(id: 0, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+      return ItemList(id: 0, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
     }
   }
 }
