@@ -142,7 +142,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
   Future<bool> checkConnection(String code) async {
     try {
       final query = """
-      mutation {
+      query {
         checkConnection(accessCode: "$code")
       }
       """;

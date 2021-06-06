@@ -1,12 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/item.dart';
 import 'package:frontend/models/new_item.dart';
+import 'package:frontend/providers/item_provider.dart';
+import 'package:frontend/providers/list_provider.dart';
 import 'package:graphql/client.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'datasources/item/item_remote_datasource.dart';
+import 'datasources/list/list_remote_datasource.dart';
+import 'features/home/screens/home_screen.dart';
+import 'features/list/item_list_screen.dart';
 
 void main() {
-  runApp(MyApp());
+
+    SharedPreferences _storage;
+
+  var httpLink = HttpLink('http://localhost:5000/graphql');
+
+  var client = GraphQLClient(
+    cache: GraphQLCache(),
+    link: httpLink,
+  );
+
+    runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ItemProvider>(
+          create: (_) => ItemProvider(),
+        ),
+        ChangeNotifierProvider<ListProvider>(
+          create: (_) => ListProvider(),
+        ),
+      ],
+      builder: (context, child) {
+        return MyApp();
+      },
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,88 +49,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  // int _counter = 0;
-
-  void _incrementCounter() async {
-    var client = GraphQLClient(
-        link: HttpLink("http://localhost:5000/graphql"), cache: GraphQLCache());
-
-    var itemDataSource = ItemRemoteDatasource(client: client);
-    var addItemResult = await itemDataSource
-        .checkConnection("28169d79-e3bd-4d26-986f-b5ac14a3d6cd");
-    // .deleteItem(
-    //   item: Item(id: 2, name: "Fish", isPerishable: true, quantity: 100), code: "28169d79-e3bd-4d26-986f-b5ac14a3d6cd");
-
-    // addItem(
-    //     item: NewItem(name: "Bread pan", isPerishable: false, quantity: 10),
-    //     code: "28169d79-e3bd-4d26-986f-b5ac14a3d6cd");
-    print("i ran!");
-    print(addItemResult);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            // Text(
-            //   '$_counter',
-            //   style: Theme.of(context).textTheme.headline4,
-            // ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      home: Consumer<ListProvider>(
+        builder: (context, currentList, child){
+          return currentList.list.code == "" ? HomeScreen() : ListScreen();
+        },
+      ) 
     );
   }
 }
