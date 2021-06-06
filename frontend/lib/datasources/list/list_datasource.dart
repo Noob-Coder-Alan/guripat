@@ -6,8 +6,8 @@ abstract class IItemListDataSource {
   Future<bool> codeIsValid(String code);
 }
 
-abstract class IItemRemoteDataSource implements IItemListDataSource {
+abstract class IItemListRemoteDataSource implements IItemListDataSource {
   Future<ItemList> generateListCode();
   Future<bool> deleteList(String code);
-  Future<bool> checkConnection(String code);
+  Future<bool> checkConnection();
 }
