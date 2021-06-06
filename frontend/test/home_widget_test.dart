@@ -50,7 +50,7 @@ class MockItemListRemoteDatasource extends Mock
     try {
       return ItemList(id: 1, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
     } catch (e) {
-      return ItemList(id: 0, code: "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+      return ItemList(id: 0, code: "");
     }
   }
 }
@@ -102,16 +102,8 @@ void main() {
 
     await tester.tap(proceedButton);
     await tester.pumpAndSettle();
+
     expect(find.text("A list code is required to proceed!"), findsOneWidget);
 
-    await tester.tap(proceedButton);
-    await tester.pumpAndSettle();
-    expect(find.text("A list code is required to proceed!"), findsOneWidget);
-
-    // await tester.enterText(accessCodeField, '');
-    // await tester.tap(proceedButton);
-    // await tester.pumpAndSettle();
-    // expect(find.text("Oops, it looks like you've entered an invalid code!"),
-    //     findsOneWidget);
   });
 }
