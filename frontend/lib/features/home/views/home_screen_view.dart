@@ -13,4 +13,5 @@ abstract class HomeScreenView {
   void onGenerateCode(BuildContext context);
   void setLocalAccessCode(String code);
   void setAppState(AppState state);
+  void isCodeValid(BuildContext context, String code);
 }

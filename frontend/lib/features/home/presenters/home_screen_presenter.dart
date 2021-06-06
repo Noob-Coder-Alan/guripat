@@ -5,14 +5,30 @@ import 'package:frontend/core/state/app_state.dart';
 import 'package:frontend/features/home/views/home_screen_view.dart';
 
 class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
-  Widget body(BuildContext context){
+  Widget body(BuildContext context) {
     checkViewAttached();
 
-    
     if (isViewAttached && getView().state == AppState.loading) {
       return Center(child: CircularProgressIndicator());
     } else if (isViewAttached && getView().state == AppState.done) {
       return getView().body;
+    } else if(isViewAttached && getView().state == AppState.invalid) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Oops, it looks like you've entered an invalid code!"),
+            SizedBox(height: 15),
+            ElevatedButton(
+                onPressed: () async {
+                  getView().setAppState(AppState.done);
+                },
+                child: Text("Okay")
+            ),
+          ],
+        ),
+      );
     } else {
       return Center(
         child: Column(
@@ -22,10 +38,9 @@ class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
             Text("An error has occured... Hmmm, it's probably the net."),
             ElevatedButton(
                 onPressed: () async {
-                  getView().state = AppState.done;
+                  getView().setAppState(AppState.done);
                 },
-                child: Text("Okay")
-            ),
+                child: Text("Okay")),
           ],
         ),
       );

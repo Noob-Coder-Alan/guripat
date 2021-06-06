@@ -13,24 +13,21 @@ import 'features/home/screens/home_screen.dart';
 import 'features/list/item_list_screen.dart';
 
 void main() {
+  SharedPreferences _storage;
 
-    SharedPreferences _storage;
+  var link = 'http://localhost:5000/graphql';
 
-  var httpLink = HttpLink('http://localhost:5000/graphql');
+  ItemListRemoteDatasource datasource = ItemListRemoteDatasource(
+      client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
 
-  var client = GraphQLClient(
-    cache: GraphQLCache(),
-    link: httpLink,
-  );
-
-    runApp(
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ItemProvider>(
-          create: (context) => ItemProvider(),
+          create: (_) => ItemProvider(),
         ),
         ChangeNotifierProvider<ListProvider>(
-          create: (context) => ListProvider(),
+          create: (_) => ListProvider(datasource: datasource),
         ),
       ],
       builder: (context, child) {
@@ -41,19 +38,20 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Guripat',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Consumer<ListProvider>(
-        builder: (context, currentList, child){
-          return currentList.list.code == "" ? HomeScreen() : ListScreen();
-        },
-      ) 
-    );
+        title: 'Guripat',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: Consumer<ListProvider>(
+          builder: (context, currentList, child) {
+            currentList.datasource.client = GraphQLClient(
+                link: HttpLink('http://localhost:5000/graphql'),
+                cache: GraphQLCache());
+            return currentList.list.code == "" ? HomeScreen() : ListScreen();
+          },
+        ));
   }
 }

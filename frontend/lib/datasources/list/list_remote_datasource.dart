@@ -34,7 +34,7 @@ class ItemListRemoteDatasource implements IItemListRemoteDataSource {
     try {
       final query = """
       query {
-        codeIsValid(accessCode: $code)
+        codeIsValid(accessCode: "$code")
       }
       """;
       final response = await client.query(
@@ -42,9 +42,10 @@ class ItemListRemoteDatasource implements IItemListRemoteDataSource {
       );
 
       var data = jsonEncode(response.data!['codeIsValid']);
+      print("didnt return an error");
       return jsonDecode(data);
     } catch (e) {
-      // print(e);
+      print(e);
       return false;
     }
   }
