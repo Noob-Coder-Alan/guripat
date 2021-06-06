@@ -11,6 +11,7 @@ import 'features/list/item_list_screen.dart';
 
 void main() {
   // SharedPreferences _storage;
+  WidgetsFlutterBinding.ensureInitialized();
 
   var link = 'http://localhost:5000/graphql';
 

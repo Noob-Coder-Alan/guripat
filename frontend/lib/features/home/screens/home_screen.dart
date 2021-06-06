@@ -91,14 +91,21 @@ class _HomeScreenState extends State<HomeScreen> implements HomeScreenView {
 
   @override
   void onGenerateCode(BuildContext context) async {
+
+
     setState(() {
       state = AppState.loading;
     });
 
     var listProvider = Provider.of<ListProvider>(context, listen: false);
 
+    
+
+
     if (await listProvider.checkConnection()) {
       var list = await listProvider.generateListCode();
+      // print("list");
+      // print(list.code);
       setState(() {
         generatedAccessCode = list.code;
         body = Home(

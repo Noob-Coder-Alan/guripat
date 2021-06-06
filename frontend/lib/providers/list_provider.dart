@@ -9,10 +9,8 @@ class ListProvider extends ChangeNotifier {
   ListProvider({required this.datasource});
 
   void setAccessCode(int id, String code) async {
-    if (await datasource.codeIsValid(code)) {
       list.code = code;
       list.id = id;
-    }
     notifyListeners();
   }
 
@@ -38,6 +36,8 @@ class ListProvider extends ChangeNotifier {
 
   Future<bool> deleteList(String code) async {
     var isDeleted = await datasource.deleteList(code);
+    this.deleteAccessCode();
+    notifyListeners();
     return isDeleted;
   }
 

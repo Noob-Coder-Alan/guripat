@@ -19,6 +19,7 @@ class Home extends StatelessWidget {
       : super(key: key);
 
   Widget buildListCodeField(BuildContext context) {
+    print(generatedAccessCode);
     return TextFormField(
       key: Key("accessCode"),
       initialValue: accessCode,
