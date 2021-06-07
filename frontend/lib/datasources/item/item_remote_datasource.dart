@@ -33,6 +33,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
     } catch (e) {
       throw e;
     }
+    
   }
 
   @override
@@ -62,8 +63,12 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       return decoded;
     } catch (e) {
       print("An error has because there is no internet connection!");
+      
       throw e;
     }
+
+    
+    
   }
 
   @override
