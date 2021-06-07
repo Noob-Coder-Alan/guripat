@@ -81,14 +81,15 @@ void main() async {
 
 
   test('List Provider should be able to set list to list property', () async {
-    provider.setAccessCode(1, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+  await provider.setAccessCode(1, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
     expect(provider.list.code, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
   });
 
   test('List Provider should be able to save accessCode to localStorage', () async {
-    // var localStorageInstance = await SharedPreferences.getInstance();
-    // var accessCode = localStorageInstance.getString("accessCode");
-    // expect(accessCode, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+    var localStorageInstance = await SharedPreferences.getInstance();
+    await provider.setAccessCode(1, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
+    var accessCode = localStorageInstance.getString("accessCode");
+    expect(accessCode, "abd443a5-6761-451f-af2f-5eaf1d8a21af");
   });
 
   test('List Provider should be able to delete item list', () async {
