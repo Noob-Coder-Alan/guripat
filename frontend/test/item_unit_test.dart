@@ -1,10 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/datasources/item/item_remote_datasource.dart';
-import 'package:frontend/datasources/list/list_remote_datasource.dart';
 
-import 'package:frontend/models/ItemList.dart';
 import 'package:frontend/models/item.dart';
 import 'package:frontend/models/new_item.dart';
 import 'package:frontend/providers/item_provider.dart';
@@ -92,7 +89,6 @@ class MockItemRemoteDatasource extends Mock implements ItemRemoteDatasource {
 void main() async {
   var datasource = MockItemRemoteDatasource();
   SharedPreferences.setMockInitialValues({});
-  var localStorageInstance = SharedPreferences.getInstance();
   var localStorage = await SharedPreferences.getInstance();
   localStorage.setString("accessCode", "abd443a5-6761-451f-af2f-5eaf1d8a21af");
 
