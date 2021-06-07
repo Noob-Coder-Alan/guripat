@@ -40,7 +40,7 @@ class ItemProvider extends ChangeNotifier {
 
     if(await datasource.checkConnection(accessCode)){
       var itemResult = await datasource.addItem(item: item, code: accessCode);
-      var listString = json.decode(localStorage.getString("items")!);
+      var listString = localStorage.getString("items")!;
       
       List<Item> items = decodeFromPrefs(listString);
       
@@ -135,7 +135,8 @@ class ItemProvider extends ChangeNotifier {
     var perishables = items.where((element) => element.isPerishable).toList();
     var nonPerishables = items.where((element) => element.isPerishable == false).toList();
 
-    var sortedList = [...nonPerishables, ...perishables];
+    var sortedList = [...perishables, ...nonPerishables];
+    
 
     return sortedList;
   }
