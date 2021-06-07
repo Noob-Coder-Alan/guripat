@@ -12,7 +12,7 @@ class ListProvider extends ChangeNotifier {
 
   ListProvider({required this.datasource, required this.localStorageInstance});
 
-  void setAccessCode(int id, String code) async {
+  Future<bool> setAccessCode(int id, String code) async {
       list.code = code;
       list.id = id;
 
@@ -21,8 +21,10 @@ class ListProvider extends ChangeNotifier {
       
       var jsonString = json.encode([]);
       await localStorage.setString("items", jsonString);
+
+      notifyListeners();
+      return true;
       
-    notifyListeners();
   }
 
   void deleteAccessCode() async {
