@@ -1,8 +1,5 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/models/item.dart';
-import 'package:badges/badges.dart';
 
 class ItemListTile extends StatelessWidget {
   final Item item;
