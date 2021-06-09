@@ -348,7 +348,7 @@ class _ListScreenState extends State<ListScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        bool isChecked = false;
+        // bool isChecked = false;
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
@@ -408,12 +408,12 @@ class _ListScreenState extends State<ListScreen> {
                         onChanged: (value) {
                           setState(() {
                             if (isPerishable) {
-                              isChecked = false;
+                              // isChecked = false;
                               isPerishable = false;
                               newItem.isPerishable = false;
                               print(isPerishable);
                             } else {
-                              isChecked = true;
+                              // isChecked = true;
                               isPerishable = true;
                               newItem.isPerishable = true;
                               print(isPerishable);
