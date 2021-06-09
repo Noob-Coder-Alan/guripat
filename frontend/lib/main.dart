@@ -21,7 +21,7 @@ void main() {
       client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
 
   ItemRemoteDatasource itemDatasource = ItemRemoteDatasource(
-    client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
+      client: GraphQLClient(cache: GraphQLCache(), link: HttpLink(link)));
 
   var localStorageInstance = SharedPreferences.getInstance();
 
@@ -30,15 +30,13 @@ void main() {
       providers: [
         ChangeNotifierProvider<ItemProvider>(
           create: (_) => ItemProvider(
-            localStorageInstance: localStorageInstance, 
-            datasource: itemDatasource
-          ),
+              localStorageInstance: localStorageInstance,
+              datasource: itemDatasource),
         ),
         ChangeNotifierProvider<ListProvider>(
           create: (_) => ListProvider(
-            localStorageInstance: localStorageInstance,
-            datasource: itemListDatasource
-          ),
+              localStorageInstance: localStorageInstance,
+              datasource: itemListDatasource),
         ),
       ],
       builder: (context, child) {
@@ -59,10 +57,42 @@ class MyApp extends StatelessWidget {
         home: Consumer<ListProvider>(
           builder: (context, currentList, child) {
             currentList.datasource.client = GraphQLClient(
-                link: HttpLink('http://localhost:5000/graphql'),
-                cache: GraphQLCache());
-            return currentList.list.code == "" ? HomeScreen() : ListScreen();
+              link: HttpLink('http://localhost:5000/graphql'),
+              cache: GraphQLCache()
+            );
+              return currentList.list.code == "" ?HomeScreen() : ListScreen();
           },
-        ));
+        )
+    );
   }
 }
+
+// class MyApp extends StatefulWidget {
+//   const MyApp({Key? key}) : super(key: key);
+
+//   @override
+//   _MyAppState createState() => _MyAppState();
+// }
+
+// class _MyAppState extends State<MyApp> {
+//   var screenToShow;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//         title: 'Guripat',
+//         theme: ThemeData(
+//           primarySwatch: Colors.blue,
+//         ),
+//         home: Consumer<ListProvider>(
+//           builder: (context, currentList, child) {
+//             currentList.datasource.client = GraphQLClient(
+//                 link: HttpLink('http://localhost:5000/graphql'),
+//                 cache: GraphQLCache());
+
+
+//               return value ? ListScreen() : HomeScreen();
+//           },
+//         ));
+//   }
+// }
