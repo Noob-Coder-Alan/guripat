@@ -13,18 +13,21 @@ class ListProvider extends ChangeNotifier {
   ListProvider({required this.datasource, required this.localStorageInstance});
 
   Future<bool> setAccessCode(int id, String code) async {
+    
+    var isValid = await isCodeValid(code);
+    if (isValid) {
       list.code = code;
       list.id = id;
-
       var localStorage = await localStorageInstance;
       await localStorage.setString("accessCode", code);
-      
       var jsonString = json.encode([]);
       await localStorage.setString("items", jsonString);
 
       notifyListeners();
       return true;
-      
+    }
+    notifyListeners();
+    return false;
   }
 
   void deleteAccessCode() async {

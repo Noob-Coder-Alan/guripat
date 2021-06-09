@@ -13,12 +13,11 @@ class ItemProvider extends ChangeNotifier {
 
   ItemProvider({required this.datasource, required this.localStorageInstance});
 
-  
   Future<List<Item>> getItems() async {
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
-    if(await datasource.checkConnection(accessCode)){
+    if (await datasource.checkConnection(accessCode)) {
       var itemsResult = await datasource.getItems(accessCode);
       var sortedItems = sortByPerishable(itemsResult);
 
@@ -28,22 +27,21 @@ class ItemProvider extends ChangeNotifier {
       return sortedItems;
     }
 
-    var itemsFromLocal = decodeFromPrefs(localStorage.getString("items")!); 
+    var itemsFromLocal = decodeFromPrefs(localStorage.getString("items")!);
     listItems = sortByPerishable(itemsFromLocal);
     return itemsFromLocal;
   }
 
   Future<bool> addItem(NewItem item) async {
-
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
-    if(await datasource.checkConnection(accessCode)){
+    if (await datasource.checkConnection(accessCode)) {
       var itemResult = await datasource.addItem(item: item, code: accessCode);
       var listString = localStorage.getString("items")!;
-      
+
       List<Item> items = decodeFromPrefs(listString);
-      
+
       items.add(itemResult);
       var sortedItems = sortByPerishable(items);
       listItems = sortedItems;
@@ -52,17 +50,16 @@ class ItemProvider extends ChangeNotifier {
 
       localStorage.setString("items", encoded);
 
-      return true; 
+      return true;
     }
     return false;
   }
 
   Future<bool> deleteItem(Item item) async {
-    
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
-    
-    if(await datasource.checkConnection(accessCode)){
+
+    if (await datasource.checkConnection(accessCode)) {
       var deleteResult = datasource.deleteItem(item: item, code: accessCode);
 
       var items = decodeFromPrefs(localStorage.getString("items")!);
@@ -83,11 +80,15 @@ class ItemProvider extends ChangeNotifier {
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
-    if(await datasource.checkConnection(accessCode)){
-      var editResult = await datasource.editItemQuantity(item: item, code: accessCode);
-
+    if (await datasource.checkConnection(accessCode)) {
+      print("provider");
+      print(item);
+      var editResult =
+          await datasource.editItemQuantity(item: item, code: accessCode);
+      print(editResult);
       var items = decodeFromPrefs(localStorage.getString("items")!);
-      var indexToUpdate = items.indexWhere((element) => element.id == editResult.id);
+      var indexToUpdate =
+          items.indexWhere((element) => element.id == editResult.id);
       items[indexToUpdate].quantity = editResult.quantity;
 
       listItems = items;
@@ -98,15 +99,27 @@ class ItemProvider extends ChangeNotifier {
     return false;
   }
 
-    Future<bool> markItemAsComplete(Item item) async {
+    Future<bool> checkInternet() async {
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
-    if(await datasource.checkConnection(accessCode)){
-      var editResult = await datasource.markItemAsComplete(item: item, code: accessCode);
+    if (await datasource.checkConnection(accessCode)) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> markItemAsComplete(Item item) async {
+    var localStorage = await localStorageInstance;
+    var accessCode = localStorage.getString("accessCode")!;
+
+    if (await datasource.checkConnection(accessCode)) {
+      var editResult =
+          await datasource.markItemAsComplete(item: item, code: accessCode);
 
       var items = decodeFromPrefs(localStorage.getString("items")!);
-      var indexToUpdate = items.indexWhere((element) => element.id == editResult.id);
+      var indexToUpdate =
+          items.indexWhere((element) => element.id == editResult.id);
       items[indexToUpdate].quantity = editResult.quantity;
 
       listItems = items;
@@ -117,28 +130,25 @@ class ItemProvider extends ChangeNotifier {
     return false;
   }
 
-
-
-  List<Item> decodeFromPrefs(String valueFromPrefs){
+  List<Item> decodeFromPrefs(String valueFromPrefs) {
     List itemsDecoded = json.decode(valueFromPrefs);
     var decoded = itemsDecoded.map((item) => Item.fromJson(item)).toList();
     return decoded;
   }
 
-  String encodeToString(List<Item> items){
+  String encodeToString(List<Item> items) {
     var mapList = items.map((e) => e.toJson()).toList();
     var encoded = json.encode(mapList);
     return encoded;
   }
 
-  List<Item> sortByPerishable(List<Item> items){
+  List<Item> sortByPerishable(List<Item> items) {
     var perishables = items.where((element) => element.isPerishable).toList();
-    var nonPerishables = items.where((element) => element.isPerishable == false).toList();
+    var nonPerishables =
+        items.where((element) => element.isPerishable == false).toList();
 
     var sortedList = [...perishables, ...nonPerishables];
-    
 
     return sortedList;
   }
 }
-
