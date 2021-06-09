@@ -18,7 +18,7 @@ class HomeScreenPresenter extends BasePresenter<HomeScreenView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Oops, it looks like you've entered an invalid code!"),
+            Text("Oops, invalid code! Or it could be the internet."),
             SizedBox(height: 15),
             ElevatedButton(
                 onPressed: () async {
