@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/state/app_state.dart';
 import 'package:frontend/features/list/widgets/item_tile.dart';
 import 'package:frontend/models/item.dart';
+import 'package:frontend/models/new_item.dart';
 import 'package:frontend/providers/item_provider.dart';
+import 'package:frontend/providers/list_provider.dart';
 import 'package:graphql/client.dart';
 import 'package:provider/provider.dart';
 
@@ -12,42 +14,52 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-
   late AppState state;
-  late List<Item> items; 
-  Map itemType = {
-    "Perishable": true,
-    "Non-Perishable": false
-  };
-
+  List<Item> items = [];
+  Map itemType = {"Perishable": true, "Non-Perishable": false};
+  bool isPerishable = false;
   String itemTypeInput = "Perishable";
 
+  NewItem newItem = NewItem(name: "", isPerishable: false, quantity: 0);
 
+  var formKey = GlobalKey<FormState>();
 
   // dropped mvp archi because it was too tedious to accomplish
-  Widget buildList(){
-    if(state == AppState.done){
+  Widget buildList() {
+    if (state == AppState.done) {
+      if (items.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Your list is empty."),
+            ],
+          ),
+        );
+      }
+
       return Container(
         child: ListView.builder(
             itemCount: items.length,
             itemBuilder: (contex, index) {
               return ItemListTile(
-                  item: items[index],
-                  functionOnTap: (){print("Open!");});
+                item: items[index],
+                functionOnEdit: showEditDialog,
+                functionOnTileTap: markAsDone,
+                functionOnDelete: deleteItem,
+              );
             }),
       );
-    } else if(state == AppState.loading){
+    } else if (state == AppState.loading) {
       return Center(child: CircularProgressIndicator());
-
-
-
     } else {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Oops, it looks like you've entered an invalid code!"),
+            Text("An error has occured!"),
             SizedBox(height: 15),
             ElevatedButton(
                 onPressed: () async {
@@ -55,144 +67,383 @@ class _ListScreenState extends State<ListScreen> {
                     state = AppState.done;
                   });
                 },
-                child: Text("Okay")
-            ),
+                child: Text("Okay")),
           ],
         ),
       );
-    } 
+    }
   }
 
   @override
-  void initState(){
-    items = [
-      Item(id: 2, name: "Beef 1 kilo", isPerishable: true, quantity: 10),
-      Item(id: 3, name: "name", isPerishable: true, quantity: 25),
-      Item(id: 1, name: "Rice 1 kilo", isPerishable: false, quantity: 5),
-    ];
+  void initState() {
+    state = AppState.loading;
 
-    state = AppState.done;
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+    provider.getItems().then((value) {
+      // state = AppState.done;
+      setState(() {
+        items = value;
+        state = AppState.done;
+      });
+    });
     super.initState();
+  }
+
+  void getItems() async {
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+    var isConnected = await provider.checkInternet();
+    if (isConnected) {
+      provider.getItems().then((value) {
+        setState(() {
+          items = value;
+        });
+      });
+    } else {
+      setState(() {
+        state = AppState.done;
+      });
+      noInternetDialog();
+    }
+  }
+
+  void editQuantity(Item item) async {
+    setState(() {
+      state = AppState.loading;
+    });
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+    var isConnected = await provider.checkInternet();
+    if (isConnected) {
+      var isSuccess = await provider.editItemQuantity(item);
+      print("Edit success!?");
+      print(isSuccess);
+      if (isSuccess) {
+        provider.getItems().then((value) {
+          setState(() {
+            items = value;
+            state = AppState.done;
+          });
+        });
+      }
+    } else {
+      setState(() {
+        state = AppState.done;
+      });
+      noInternetDialog();
+    }
+  }
+
+  void markAsDone(Item item) async {
+    setState(() {
+      state = AppState.loading;
+    });
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+    var isConnected = await provider.checkInternet();
+    if (isConnected) {
+      var isSuccess = await provider.markItemAsComplete(item);
+      print("Mark success!?");
+      print(isSuccess);
+      if (isSuccess) {
+        provider.getItems().then((value) {
+          setState(() {
+            items = value;
+            state = AppState.done;
+          });
+        });
+      }
+    } else {
+      setState(() {
+        state = AppState.done;
+      });
+      noInternetDialog();
+    }
+  }
+
+  void deleteItem(Item item) async {
+    setState(() {
+      state = AppState.loading;
+    });
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+    var isConnected = await provider.checkInternet();
+    if (isConnected) {
+      var isSuccess = await provider.deleteItem(item);
+      print("Delete success!?");
+      print(isSuccess);
+      if (isSuccess) {
+        provider.getItems().then((value) {
+          setState(() {
+            items = value;
+            state = AppState.done;
+          });
+        });
+      }
+    } else {
+      setState(() {
+        state = AppState.done;
+      });
+      noInternetDialog();
+    }
+  }
+
+  void addItem() async {
+    setState(() {
+      state = AppState.loading;
+    });
+    var provider = Provider.of<ItemProvider>(context, listen: false);
+
+    var isConnected = await provider.checkInternet();
+
+    if (isConnected) {
+      await provider.addItem(newItem);
+      provider.getItems().then((value) {
+        setState(() {
+          items = value;
+          state = AppState.done;
+        });
+      });
+    } else {
+      setState(() {
+        state = AppState.done;
+      });
+      noInternetDialog();
+    }
+  }
+
+  void exitList() async {
+    setState(() {
+      state = AppState.loading;
+    });
+    var provider = Provider.of<ListProvider>(context, listen: false);
+    provider.deleteAccessCode();
+  }
+
+  String countCompleted() {
+    if (items.isEmpty) {
+      return "Guripat Checklist App";
+    }
+    var completed =
+        items.where((element) => element.quantity == 0).toList().length;
+    var total = items.length;
+    return "$completed out of $total completed";
   }
 
   @override
   Widget build(BuildContext context) {
-    // return Consumer<ItemProvider>(
-      // builder: (context, provider, child) {
-        // provider.datasource.client = GraphQLClient(
-        //   link: HttpLink('http://localhost:5000/graphql'),
-        //   cache: GraphQLCache());
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: showMyDialog,
-          ),
-          appBar: AppBar(
-            title: Text("List"),
-          ),
+    return Consumer<ItemProvider>(
+      builder: (context, provider, child) {
+        provider.datasource.client = GraphQLClient(
+            link: HttpLink('http://localhost:5000/graphql'),
+            cache: GraphQLCache());
 
-          body: buildList()
-        );
-      // },
-    // );
+        return Scaffold(
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: showAddDialog,
+            ),
+            appBar: AppBar(
+              centerTitle: true,
+              leading: Icon(Icons.list_alt_outlined),
+              title: Text(countCompleted()),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      exitList();
+                    },
+                    icon: Icon(Icons.logout_rounded)),
+              ],
+            ),
+            body: buildList());
+      },
+    );
   }
 
-  Widget alertDialog(){
-    return AlertDialog(
-      title: Text("Add Item"),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextFormField(
-              key: Key("name"),
-              initialValue: "",
-              decoration: InputDecoration(
-                labelText: '  Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              validator: (value) {
-                if (value == "") {
-                  return "A name is required!";
-                }
-                return null;
-              },
-              onChanged: (value) {
-              },
-            ),
-            SizedBox(height: 15),
-            TextFormField(
-              key: Key("quantity"),
-              initialValue: "",
-              decoration: InputDecoration(
-                labelText: '  Quantity',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              validator: (value) {
-                if (int.tryParse(value!) == null) {
-                  return "A name is required!";
-                }
-                return null;
-              },
-              onChanged: (value) {
-              },
-            ),
-            DropdownButton<String>(
-              value: itemTypeInput,
-              icon: const Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              style: const TextStyle(
-                color: Colors.deepPurple
-              ),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  itemTypeInput = newValue!;
-                });
-              },
-              items: <String>['Perishable', 'Non-Perishable']
-                .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                })
-                .toList(),
-            ),
+  Future<void> noInternetDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("No internet!"),
+          content: SingleChildScrollView(
+              child: Text(
+                  "The app can't access the internet right now. Try again later.")),
+          actions: [
+            TextButton(
+                child: Text("Aw snap!"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
           ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: Text("Submit"),
-          onPressed: (){
-            Navigator.of(context).pop();
-          }
-        ),
-        TextButton(
-          child: Text("Cancel"),
-          onPressed: (){
-            Navigator.of(context).pop();
-          }
-        ),
-      ],
+        );
+      },
     );
-}
+  }
 
-Future<void> showMyDialog() async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return alertDialog();
-    },
-  );
-}
+  Future<void> showEditDialog(Item item) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        var localKey = GlobalKey<FormState>();
+        var localNewItem = item;
+
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text("Edit item quantity"),
+            content: SingleChildScrollView(
+              child: Form(
+                key: localKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      key: Key("quantityEdit"),
+                      initialValue: "${item.quantity}",
+                      decoration: InputDecoration(
+                        labelText: '  Quantity',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (int.tryParse(value!) == null) {
+                          return "A valid quantity is required!";
+                        }
+                        if (int.tryParse(value)! > 1000000) {
+                          return "Quantity is invalid!";
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        localNewItem.quantity = int.parse(value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                  child: Text("Submit"),
+                  onPressed: () {
+                    if (!localKey.currentState!.validate()) {
+                      return;
+                    } else {
+                      editQuantity(localNewItem);
+                      Navigator.of(context).pop();
+                    }
+                  }),
+              TextButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  Future<void> showAddDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        bool isChecked = false;
+
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text("Add Item"),
+            content: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      key: Key("name"),
+                      initialValue: "",
+                      decoration: InputDecoration(
+                        labelText: '  Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == "") {
+                          return "A name is required!";
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        newItem.name = value;
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      key: Key("quantity"),
+                      initialValue: "",
+                      decoration: InputDecoration(
+                        labelText: '  Quantity',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (int.tryParse(value!) == null) {
+                          return "A name is required!";
+                        }
+
+                        if (int.tryParse(value)! > 1000000) {
+                          return "Quantity is invalid!";
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        newItem.quantity = int.parse(value);
+                      },
+                    ),
+                    CheckboxListTile(
+                        value: isPerishable,
+                        title: Text("Perishable"),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (value) {
+                          setState(() {
+                            if (isPerishable) {
+                              isChecked = false;
+                              isPerishable = false;
+                              newItem.isPerishable = false;
+                              print(isPerishable);
+                            } else {
+                              isChecked = true;
+                              isPerishable = true;
+                              newItem.isPerishable = true;
+                              print(isPerishable);
+                            }
+                          });
+                        }),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                  child: Text("Submit"),
+                  onPressed: () {
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    } else {
+                      addItem();
+                      Navigator.of(context).pop();
+                    }
+                  }),
+              TextButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
+      },
+    );
+  }
 }
