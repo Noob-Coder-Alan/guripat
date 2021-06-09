@@ -33,7 +33,6 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
     } catch (e) {
       throw e;
     }
-    
   }
 
   @override
@@ -63,12 +62,9 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       return decoded;
     } catch (e) {
       print("An error has because there is no internet connection!");
-      
+
       throw e;
     }
-
-    
-    
   }
 
   @override
@@ -110,7 +106,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
         QueryOptions(document: gql(query)),
       );
 
-      var data = jsonEncode(response.data!['editItemQuality']);
+      var data = jsonEncode(response.data!['editItemQuantity']);
       return Item.fromJson(jsonDecode(data));
     } catch (e) {
       throw e;
