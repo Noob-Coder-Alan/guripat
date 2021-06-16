@@ -1,19 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-//This is how I would test location
+/*
+    Given that im using Flutter's Location plugin for this case, I could instantiate 
+  Location and call on getLocation() to retrieve the actual location data. 
+  To test, I could mock Location using mockito and have it return location data that's controllable.
+  Then the data from the mocked location could be passed to a maps api that would, in theory, show where
+  my location is. The location shown by the maps api would depend on the data I want returned by the getLocation method
+  of Mocked location.
+*/
 
-// Models
-class LocationInput {
-  final double latitude;
-  final double longitude;
-
-  LocationInput({
-    required this.latitude,
-    required this.longitude,
-  });
+// Location API
+class LocationApi {
+  getLocation() async {}
 }
 
+// Location Data
 class LocationData {
   final double speed;
   final double longitude;
@@ -21,11 +23,6 @@ class LocationData {
 
   LocationData(
       {required this.speed, required this.longitude, required this.latitude});
-}
-
-// Location API
-class LocationApi {
-  getLocation() async {}
 }
 
 // Maps API
