@@ -192,7 +192,7 @@ void main() async {
     expect(decoded.last.id, database.last.id);
   });
 
-  test("Provider's sortByPerishables should return a sorted list of items with perishables first and nonperishables last", (){
+  test("Provider's sortByPerishables should return a sorted list of items with non-perishables first and perishables last", (){
     var database = [
         Item(id: 1, name: "Rice 1 kilo", isPerishable: false, quantity: 5),
         Item(id: 2, name: "Beef 1 kilo", isPerishable: true, quantity: 10),
@@ -201,9 +201,9 @@ void main() async {
 
     var sorted = provider.sortByPerishable(database);
 
-    expect(sorted.first.isPerishable, true);
+    expect(sorted.first.isPerishable, false);
     expect(sorted[1].isPerishable, true);
-    expect(sorted.last.isPerishable, false);
+    expect(sorted.last.isPerishable, true);
   });
 
   
