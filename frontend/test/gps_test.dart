@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+//This is how I would test location
+
 // Models
 class LocationInput {
   final double latitude;
@@ -51,7 +53,7 @@ class MockLocationApi extends Mock implements LocationApi {
       // Place(longitude, latitude)
 
       // SM City(10.714116158980621, 122.5513503415961)
-      return await LocationData(
+      return LocationData(
           longitude: 10.714116158980621, latitude: 122.5513503415961, speed: 0);
 
       // // Festive Walk(10.717484303610135, 122.5460816187768)

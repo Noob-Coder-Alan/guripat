@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/datasources/item/item_remote_datasource.dart';
-import 'package:frontend/datasources/list/list_remote_datasource.dart';
 import 'package:frontend/features/list/item_list_screen.dart';
-import 'package:frontend/features/list/widgets/item_tile.dart';
 import 'package:frontend/models/item.dart';
 import 'package:frontend/models/new_item.dart';
 import 'package:frontend/providers/item_provider.dart';
-import 'package:frontend/providers/list_provider.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
