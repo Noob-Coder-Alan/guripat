@@ -15,7 +15,7 @@ class ItemListTile extends StatelessWidget {
     required this.functionOnDelete,
   }) : super(key: key);
 
-  Future<void> noInternetDialog(BuildContext context) async {
+  Future<void> deleteDialog(BuildContext context) async {
     return showDialog<void>(
       context: (context),
       barrierDismissible: false,
@@ -26,6 +26,7 @@ class ItemListTile extends StatelessWidget {
               child: Text("Are you sure you want to delete this item?")),
           actions: [
             TextButton(
+              key: Key("deleteConfirm"),
                 child: Text("Delete"),
                 onPressed: () {
                   functionOnDelete(item);
@@ -58,14 +59,16 @@ class ItemListTile extends StatelessWidget {
               spacing: 15, // space between two icons
               children: <Widget>[
                 IconButton(
+                  key: Key("editButton"),
                     onPressed: () {
                       functionOnEdit(item);
                     },
                     icon: Icon(Icons.edit)),
                 IconButton(
+                  key: Key("deleteButton"),
                     onPressed: () {
                       // functionOnDelete(item);
-                      noInternetDialog(context);
+                      deleteDialog(context);
                     },
                     icon: Icon(Icons.delete))
               ],

@@ -5,7 +5,6 @@ import 'package:frontend/models/item.dart';
 import 'package:frontend/models/new_item.dart';
 import 'package:frontend/providers/item_provider.dart';
 import 'package:frontend/providers/list_provider.dart';
-import 'package:graphql/client.dart';
 import 'package:provider/provider.dart';
 
 class ListScreen extends StatefulWidget {
@@ -259,9 +258,9 @@ class _ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     return Consumer<ItemProvider>(
       builder: (context, provider, child) {
-        provider.datasource.client = GraphQLClient(
-            link: HttpLink('http://localhost:5000/graphql'),
-            cache: GraphQLCache());
+        // provider.datasource.client = GraphQLClient(
+        //     link: HttpLink('http://localhost:5000/graphql'),
+        //     cache: GraphQLCache());
 
         // if (isCompleted()) {
         //   showCompletionDialog();
@@ -279,6 +278,7 @@ class _ListScreenState extends State<ListScreen> {
               title: Text(countCompleted()),
               actions: [
                 IconButton(
+                  key: Key("logOut"),
                     onPressed: () {
                       exitList();
                     },
@@ -357,6 +357,7 @@ class _ListScreenState extends State<ListScreen> {
             ),
             actions: [
               TextButton(
+                  key: Key("editSubmit"),
                   child: Text("Submit"),
                   onPressed: () {
                     if (!localKey.currentState!.validate()) {
@@ -463,6 +464,7 @@ class _ListScreenState extends State<ListScreen> {
             ),
             actions: [
               TextButton(
+                  key: Key("submitItem"),
                   child: Text("Submit"),
                   onPressed: () {
                     if (!formKey.currentState!.validate()) {
