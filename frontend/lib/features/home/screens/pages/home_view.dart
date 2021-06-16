@@ -59,7 +59,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        margin: EdgeInsets.all(20),
+        margin: EdgeInsets.fromLTRB(25, 100, 25, 25),
         child: Form(
             key: formKey,
             child: Center(
@@ -67,6 +67,10 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Text("Enter your list code here."),
+                  SizedBox(
+                    height: 15,
+                  ),
                   buildListCodeField(context),
                   SizedBox(
                     height: 25,
@@ -88,10 +92,19 @@ class Home extends StatelessWidget {
                   SizedBox(
                     height: 50,
                   ),
+                  Text("Don't have a code? Generate one below."),
+                  SizedBox(
+                    height: 7.5,
+                  ),
+                  Text("Always remember to keep your codes secure."),
+                  SizedBox(
+                    height: 15,
+                  ),
                   buildGeneratedListCodeField(),
                   SizedBox(
                     height: 25,
                   ),
+
                   ElevatedButton(
                     key: Key("generate"),
                     child: Text("Generate list code"),

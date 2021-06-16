@@ -24,7 +24,6 @@ class _ListScreenState extends State<ListScreen> {
 
   var formKey = GlobalKey<FormState>();
 
-  // dropped mvp archi because it was too tedious to accomplish
   Widget buildList() {
     if (state == AppState.done) {
       if (items.isEmpty) {
@@ -226,6 +225,36 @@ class _ListScreenState extends State<ListScreen> {
     return "$completed out of $total completed";
   }
 
+  bool isCompleted() {
+    var completed =
+        items.where((element) => element.quantity == 0).toList().length;
+    var total = items.length;
+
+    return completed == total ? true : false;
+  }
+
+  Future<void> showCompletionDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Check List Completed!"),
+          content: SingleChildScrollView(
+              child: Text(
+                  "Great job! Looks like someone ain't gonna get a guripat today.")),
+          actions: [
+            TextButton(
+                child: Text("Yey"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ItemProvider>(
@@ -234,8 +263,13 @@ class _ListScreenState extends State<ListScreen> {
             link: HttpLink('http://localhost:5000/graphql'),
             cache: GraphQLCache());
 
+        // if (isCompleted()) {
+        //   showCompletionDialog();
+        // }
+
         return Scaffold(
             floatingActionButton: FloatingActionButton(
+              key: Key("addButton"),
               child: Icon(Icons.add),
               onPressed: showAddDialog,
             ),
@@ -288,6 +322,7 @@ class _ListScreenState extends State<ListScreen> {
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
+            key: Key("editDialog"),
             title: Text("Edit item quantity"),
             content: SingleChildScrollView(
               child: Form(
@@ -349,9 +384,11 @@ class _ListScreenState extends State<ListScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         // bool isChecked = false;
+  
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
+            key: Key("addDialog"),
             title: Text("Add Item"),
             content: SingleChildScrollView(
               child: Form(

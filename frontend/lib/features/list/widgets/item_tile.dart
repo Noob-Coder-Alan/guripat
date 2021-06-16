@@ -45,6 +45,7 @@ class ItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key("itemListTile"),
       height: 100,
       child: Card(
         child: ListTile(

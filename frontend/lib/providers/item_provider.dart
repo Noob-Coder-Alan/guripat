@@ -16,7 +16,7 @@ class ItemProvider extends ChangeNotifier {
   Future<List<Item>> getItems() async {
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
-
+    print(await datasource.checkConnection(accessCode));
     if (await datasource.checkConnection(accessCode)) {
       var itemsResult = await datasource.getItems(accessCode);
       var sortedItems = sortByPerishable(itemsResult);
@@ -33,6 +33,7 @@ class ItemProvider extends ChangeNotifier {
   }
 
   Future<bool> addItem(NewItem item) async {
+    print("hello");
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
@@ -99,7 +100,7 @@ class ItemProvider extends ChangeNotifier {
     return false;
   }
 
-    Future<bool> checkInternet() async {
+  Future<bool> checkInternet() async {
     var localStorage = await localStorageInstance;
     var accessCode = localStorage.getString("accessCode")!;
 
@@ -147,7 +148,7 @@ class ItemProvider extends ChangeNotifier {
     var nonPerishables =
         items.where((element) => element.isPerishable == false).toList();
 
-    var sortedList = [...perishables, ...nonPerishables];
+    var sortedList = [...nonPerishables, ...perishables];
 
     return sortedList;
   }
