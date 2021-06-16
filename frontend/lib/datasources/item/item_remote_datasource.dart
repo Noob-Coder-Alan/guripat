@@ -25,7 +25,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       """;
 
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['addItem']);
@@ -50,7 +53,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       """;
 
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['getItems']);
@@ -77,7 +83,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       """;
 
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['deleteItem']);
@@ -103,7 +112,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       """;
 
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['editItemQuantity']);
@@ -129,7 +141,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       """;
 
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['markItemAsComplete']);
@@ -148,7 +163,10 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       }
       """;
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['checkConnection']);

@@ -38,7 +38,10 @@ class ItemListRemoteDatasource implements IItemListRemoteDataSource {
       }
       """;
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['codeIsValid']);
@@ -59,7 +62,10 @@ class ItemListRemoteDatasource implements IItemListRemoteDataSource {
       }
       """;
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['deleteList']);
@@ -82,7 +88,10 @@ class ItemListRemoteDatasource implements IItemListRemoteDataSource {
         }
       """;
       final response = await client.query(
-        QueryOptions(document: gql(query)),
+        QueryOptions(
+          document: gql(query),
+          fetchPolicy: FetchPolicy.networkOnly
+        ),
       );
 
       var data = jsonEncode(response.data!['generateListCode']);
